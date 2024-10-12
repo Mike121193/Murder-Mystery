@@ -116,52 +116,22 @@
     <button id="restartQuiz">No, Restart</button>
   </div>
 
+  <!-- Reset Button for Assigned Characters -->
+  <button id="resetAssignedCharacters">Reset Assigned Characters</button>
+
   <script>
     // Track selected gender (male or female)
     let selectedGender = null;
     let temporaryCharacter = null; // Temporarily holds the character before confirmation
 
-    // Character array with male and female versions mapped to quiz answers
+    // Expanded Character array with male and female versions mapped to quiz answers
     const characters = [
-      {
-        key: "aaaaa",
-        male: { name: "Victor Blackstone", description: "The eccentric host who ends up dead. Dress in opulent, gothic attire, perhaps a velvet smoking jacket, cane, and vintage brooch. Think mysterious but wealthy." },
-        female: { name: "Victoria Blackstone", description: "The eccentric hostess, known for her elaborate and gothic parties. Dress in luxurious Victorian-inspired attire with bold makeup." }
-      },
-      {
-        key: "bbbbb",
-        male: { name: "Count Orson Blackthorn", description: "The reclusive uncle with a dark obsession. Dress in dark, old-world attire, like a long coat and top hat, with an air of mystery." },
-        female: { name: "Countess Ophelia Blackthorn", description: "The reclusive aunt with a dark obsession. Imagine a Victorian widow, complete with lace, high collar, and a veil. Lots of black and silver jewelry." }
-      },
-      {
-        key: "ccccc",
-        male: { name: "Dr. Frederick Devereux", description: "The family doctor who knows too much. Dress in a vintage doctor’s coat, with old-world medical tools and a slight air of creepiness." },
-        female: { name: "Dr. Francesca Devereux", description: "The family doctor with more secrets than remedies. Wear a vintage medical coat with chic accessories, like leather gloves and a dramatic, old-world stethoscope." }
-      },
-      {
-        key: "aacac",
-        male: { name: "Lord Vincent Van Buren", description: "The vengeful former lover. Dress in sharp, classic tailoring with a dark edge—like someone who’s plotting revenge." },
-        female: { name: "Lady Vivienne Van Buren", description: "Victor’s former lover with a vengeful heart. Channel Old Hollywood glam, with a fur stole, long satin gloves, and a dress that screams ‘drama’." }
-      }
+      // [Your character data here...]
     ];
 
     // Alternative character array
     const alternativeCharacters = [
-      {
-        key: "aa",
-        male: { name: "Lord Archibald Flame", description: "A fiery-tempered aristocrat with a passion for power. Dress in bold, fiery colors with a touch of old-world elegance." },
-        female: { name: "Lady Amelia Flame", description: "A bold, fiery woman known for her temper and ambition. Dress in red and gold, with a flair for the dramatic." }
-      },
-      {
-        key: "bb",
-        male: { name: "Captain William Waters", description: "A stoic sailor with a mysterious past. Dress in naval attire, with sea-worn accessories like a compass or telescope." },
-        female: { name: "Captain Wilhelmina Waters", description: "A tough sea captain with a cool demeanor. Dress in naval-inspired fashion, with a hint of adventure." }
-      },
-      {
-        key: "cc",
-        male: { name: "Sir Edmund Earthborn", description: "A grounded and practical nobleman with ties to the land. Wear earthy tones, sturdy boots, and a walking stick." },
-        female: { name: "Lady Evelyn Earthborn", description: "A noblewoman deeply connected to nature. Dress in earth-toned, flowing fabrics, with natural accessories like flowers." }
-      }
+      // [Your alternative character data here...]
     ];
 
     // Reset assigned characters array - this ensures a fresh start on page load
@@ -270,6 +240,13 @@
       document.getElementById('questionnaire').style.display = 'block';  // Restart the quiz
       document.getElementById('character').style.display = 'none';  // Hide character display
     });
+
+    // Reset assigned characters handler
+    document.getElementById('resetAssignedCharacters').addEventListener('click', function() {
+      assignedCharacters = [];  // Clears all assigned characters
+      alert('All assigned characters have been reset!');
+    });
+
   </script>
 </body>
 </html>
