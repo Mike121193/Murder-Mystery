@@ -20,7 +20,7 @@
       font-size: 1.2em;
       margin-bottom: 30px;
     }
-    .questionnaire, .genderChoice, .character {
+    .questionnaire, .character, .genderSelection {
       display: none;
       margin-bottom: 30px;
     }
@@ -47,12 +47,16 @@
 </head>
 <body>
   <h1>Fabulor Manor</h1>
-  <p>Take a short quiz to discover your perfect character for the evening! You will also choose a male or female version of the character.</p>
+  <p>Select your gender first, then take a short quiz to discover your perfect character for the evening!</p>
 
-  <!-- Button to start the quiz -->
-  <button id="startQuiz">Start Quiz</button>
+  <!-- Step 1: Gender Selection -->
+  <div class="genderSelection" id="genderSelection">
+    <p>Would you prefer to be a male or female character?</p>
+    <button id="maleChoice">Male</button>
+    <button id="femaleChoice">Female</button>
+  </div>
 
-  <!-- Questionnaire -->
+  <!-- Step 2: Quiz Questions -->
   <div class="questionnaire" id="questionnaire">
     <p>1. How would you describe your personality?</p>
     <input type="radio" id="a1" name="question1" value="a"> Bold and eccentric <br>
@@ -72,17 +76,13 @@
     <button id="submitQuiz">Submit Answers</button>
   </div>
 
-  <!-- Gender Choice -->
-  <div class="genderChoice" id="genderChoice">
-    <p>Would you prefer to be a male or female version of your character?</p>
-    <button id="maleChoice">Male</button>
-    <button id="femaleChoice">Female</button>
-  </div>
-
-  <!-- Display assigned character -->
+  <!-- Step 3: Display assigned character -->
   <div class="character" id="character"></div>
 
   <script>
+    // Track selected gender (male or female)
+    let selectedGender = null;
+
     // Character array with male and female versions mapped to quiz answers
     const characters = [
       {
@@ -104,36 +104,6 @@
         key: "ccc",
         male: { name: "Lord Vincent Van Buren", description: "The vengeful former lover. Dress in sharp, classic tailoring with a dark edge—like someone who’s plotting revenge." },
         female: { name: "Lady Vivienne Van Buren", description: "Victor’s former lover with a vengeful heart. Channel Old Hollywood glam, with a fur stole, long satin gloves, and a dress that screams ‘drama’." }
-      },
-      {
-        key: "bba",
-        male: { name: "Barnaby Fitzgerald", description: "The butler who knows all the family secrets. Classic butler uniform with a twist: perhaps slightly disheveled, showing he's been through a lot in the manor." },
-        female: { name: "Beatrice Fitzgerald", description: "The loyal housekeeper who’s seen too much. Dress in a Victorian-style maid’s uniform, slightly worn from years of service." }
-      },
-      {
-        key: "abb",
-        male: { name: "Seer Silas", description: "A mysterious fortune teller with a connection to the supernatural. Flowing robes, a crystal necklace, and an air of mysticism." },
-        female: { name: "Madame Seraphina", description: "A mysterious fortune teller with a connection to the manor. Think flowing robes, crystal necklaces, and a headscarf—an air of mysticism is a must!" }
-      },
-      {
-        key: "aba",
-        male: { name: "Isaac Belmont", description: "A once-wealthy heir struggling to maintain his fortune. Dress as a gentleman fallen on hard times: an elegant suit, but slightly shabby." },
-        female: { name: "Isadora Belmont", description: "The heiress with financial troubles and a hidden agenda. Dress as a glamorous socialite, with a lavish dress and plenty of costume jewelry, though a bit ‘faded’ from her glory days." }
-      },
-      {
-        key: "bcb",
-        male: { name: "Lord Reginald Blackstone", description: "Victor’s estranged brother, cut out of the fortune. Think of a slightly shabby aristocrat—tailored but worn-out clothes, like a nobleman who has fallen on hard times." },
-        female: { name: "Lady Regina Blackstone", description: "Victor’s estranged sister, living in the shadows. Dress in worn-out, old-world fashion, with an air of past grandeur." }
-      },
-      {
-        key: "bca",
-        male: { name: "Thaddeus Nightshade", description: "The curious neighbor with a dark secret. Dress in slightly eerie, eccentric fashion—dark colors, and strange accessories like an old-fashioned key or a lantern." },
-        female: { name: "Tabitha Nightshade", description: "The curious neighbor with a penchant for the paranormal. Gothic but quirky—imagine dark colors, quirky accessories like pendants, and a journal for her paranormal findings." }
-      },
-      {
-        key: "bab",
-        male: { name: "Reverend Ezekiel Whitmore", description: "The priest with a dark past and even darker intentions. Wear traditional priest’s robes, but with something sinister—like a hidden dagger or a cross necklace with a twist." },
-        female: { name: "Reverend Evelyn Whitmore", description: "The sinister priestess with a dark past. Traditional robes with an unsettling air, hiding something dangerous under the surface." }
       }
       // Add more characters as needed...
     ];
@@ -141,50 +111,41 @@
     // Track assigned characters to prevent duplicates
     let assignedCharacters = [];
 
-    // Store the result of the quiz
-    let quizResult = null;
+    // Show the gender selection when the page loads
+    document.getElementById('genderSelection').style.display = 'block';
 
-    // Show the quiz when "Start Quiz" is clicked
-    document.getElementById('startQuiz').addEventListener('click', function() {
-      document.getElementById('questionnaire').style.display = 'block';
-      this.style.display = 'none';
+    // Handle gender selection
+    document.getElementById('maleChoice').addEventListener('click', function() {
+      selectedGender = 'male';
+      startQuiz();
     });
+    
+    document.getElementById('femaleChoice').addEventListener('click', function() {
+      selectedGender = 'female';
+      startQuiz();
+    });
+
+    // Start the quiz after gender is selected
+    function startQuiz() {
+      document.getElementById('genderSelection').style.display = 'none';
+      document.getElementById('questionnaire').style.display = 'block';
+    }
 
     // Handle quiz submission
     document.getElementById('submitQuiz').addEventListener('click', function() {
       const answers = `${getSelectedValue('question1')}${getSelectedValue('question2')}${getSelectedValue('question3')}`;
-      quizResult = getMatchingCharacter(answers);
+      const character = getMatchingCharacter(answers, selectedGender);
 
-      if (quizResult) {
+      if (character) {
         document.getElementById('questionnaire').style.display = 'none';
-        document.getElementById('genderChoice').style.display = 'block';  // Show gender choice
-      } else {
-        document.getElementById('character').innerHTML = `Sorry, all matching characters have been assigned. Please try again later.`;
-      }
-    });
-
-    // Handle gender choice
-    document.getElementById('maleChoice').addEventListener('click', function() {
-      assignCharacter('male');
-    });
-    
-    document.getElementById('femaleChoice').addEventListener('click', function() {
-      assignCharacter('female');
-    });
-
-    // Function to assign a character based on the selected gender
-    function assignCharacter(gender) {
-      const character = quizResult[gender];
-
-      if (character && !assignedCharacters.includes(character.name)) {
         document.getElementById('character').innerHTML = `You are assigned: <strong>${character.name}</strong> - ${character.description}`;
         assignedCharacters.push(character.name);  // Mark character as assigned
-        document.getElementById('genderChoice').style.display = 'none';  // Hide the gender choice
         document.getElementById('character').style.display = 'block';  // Show assigned character
       } else {
-        document.getElementById('character').innerHTML = `Sorry, this character has already been assigned.`;
+        document.getElementById('character').innerHTML = `Sorry, all matching characters have been assigned. Please try again later.`;
+        document.getElementById('character').style.display = 'block';
       }
-    }
+    });
 
     // Function to get the selected value of a question
     function getSelectedValue(questionName) {
@@ -197,11 +158,11 @@
       return null;
     }
 
-    // Function to match answers to a character and ensure no duplicate assignment
-    function getMatchingCharacter(answers) {
+    // Function to match answers to a character based on gender
+    function getMatchingCharacter(answers, gender) {
       for (const character of characters) {
-        if (character.key === answers) {
-          return character;
+        if (character.key === answers && !assignedCharacters.includes(character[gender].name)) {
+          return character[gender];
         }
       }
       return null;  // Return null if no available match
