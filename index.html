@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fabulor Manor Character Assignment</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e2f;
+      color: #f9f9f9;
+      text-align: center;
+      padding: 50px;
+    }
+    h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+    }
+    .questionnaire, .genderChoice, .character {
+      display: none;
+      margin-bottom: 30px;
+    }
+    .character {
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1.2em;
+      cursor: pointer;
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #e63e3e;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Fabulor Manor</h1>
+  <p>Take a short quiz to discover your perfect character for the evening! You will also choose a male or female version of the character.</p>
+
+  <!-- Button to start the quiz -->
+  <button id="startQuiz">Start Quiz</button>
+
+  <!-- Questionnaire -->
+  <div class="questionnaire" id="questionnaire">
+    <p>1. How would you describe your personality?</p>
+    <input type="radio" id="a1" name="question1" value="a"> Bold and eccentric <br>
+    <input type="radio" id="b1" name="question1" value="b"> Mysterious and reserved <br>
+    <input type="radio" id="c1" name="question1" value="c"> Charming and seductive <br>
+    
+    <p>2. What’s your favorite way to spend a weekend?</p>
+    <input type="radio" id="a2" name="question2" value="a"> Hosting fabulous parties <br>
+    <input type="radio" id="b2" name="question2" value="b"> Solving puzzles or mysteries <br>
+    <input type="radio" id="c2" name="question2" value="c"> Planning revenge <br>
+
+    <p>3. How would others describe your style?</p>
+    <input type="radio" id="a3" name="question3" value="a"> Glamorous and attention-grabbing <br>
+    <input type="radio" id="b3" name="question3" value="b"> Classic and timeless <br>
+    <input type="radio" id="c3" name="question3" value="c"> Elegant but dangerous <br>
+
+    <button id="submitQuiz">Submit Answers</button>
+  </div>
+
+  <!-- Gender Choice -->
+  <div class="genderChoice" id="genderChoice">
+    <p>Would you prefer to be a male or female version of your character?</p>
+    <button id="maleChoice">Male</button>
+    <button id="femaleChoice">Female</button>
+  </div>
+
+  <!-- Display assigned character -->
+  <div class="character" id="character"></div>
+
+  <script>
+    // Character array with male and female versions mapped to quiz answers
+    const characters = [
+      {
+        key: "aaa",
+        male: { name: "Victor Blackstone", description: "The eccentric host who ends up dead. Dress in opulent, gothic attire, perhaps a velvet smoking jacket, cane, and vintage brooch. Think mysterious but wealthy." },
+        female: { name: "Victoria Blackstone", description: "The eccentric hostess, known for her elaborate and gothic parties. Dress in luxurious Victorian-inspired attire with bold makeup." }
+      },
+      {
+        key: "bbb",
+        male: { name: "Count Orson Blackthorn", description: "The reclusive uncle with a dark obsession. Dress in dark, old-world attire, like a long coat and top hat, with an air of mystery." },
+        female: { name: "Countess Ophelia Blackthorn", description: "The reclusive aunt with a dark obsession. Imagine a Victorian widow, complete with lace, high collar, and a veil. Lots of black and silver jewelry." }
+      },
+      {
+        key: "aac",
+        male: { name: "Dr. Frederick Devereux", description: "The family doctor who knows too much. Dress in a vintage doctor’s coat, with old-world medical tools and a slight air of creepiness." },
+        female: { name: "Dr. Francesca Devereux", description: "The family doctor with more secrets than remedies. Wear a vintage medical coat with chic accessories, like leather gloves and a dramatic, old-world stethoscope." }
+      },
+      {
+        key: "ccc",
+        male: { name: "Lord Vincent Van Buren", description: "The vengeful former lover. Dress in sharp, classic tailoring with a dark edge—like someone who’s plotting revenge." },
+        female: { name: "Lady Vivienne Van Buren", description: "Victor’s former lover with a vengeful heart. Channel Old Hollywood glam, with a fur stole, long satin gloves, and a dress that screams ‘drama’." }
+      },
+      {
+        key: "bba",
+        male: { name: "Barnaby Fitzgerald", description: "The butler who knows all the family secrets. Classic butler uniform with a twist: perhaps slightly disheveled, showing he's been through a lot in the manor." },
+        female: { name: "Beatrice Fitzgerald", description: "The loyal housekeeper who’s seen too much. Dress in a Victorian-style maid’s uniform, slightly worn from years of service." }
+      },
+      {
+        key: "abb",
+        male: { name: "Seer Silas", description: "A mysterious fortune teller with a connection to the supernatural. Flowing robes, a crystal necklace, and an air of mysticism." },
+        female: { name: "Madame Seraphina", description: "A mysterious fortune teller with a connection to the manor. Think flowing robes, crystal necklaces, and a headscarf—an air of mysticism is a must!" }
+      },
+      {
+        key: "aba",
+        male: { name: "Isaac Belmont", description: "A once-wealthy heir struggling to maintain his fortune. Dress as a gentleman fallen on hard times: an elegant suit, but slightly shabby." },
+        female: { name: "Isadora Belmont", description: "The heiress with financial troubles and a hidden agenda. Dress as a glamorous socialite, with a lavish dress and plenty of costume jewelry, though a bit ‘faded’ from her glory days." }
+      },
+      {
+        key: "bcb",
+        male: { name: "Lord Reginald Blackstone", description: "Victor’s estranged brother, cut out of the fortune. Think of a slightly shabby aristocrat—tailored but worn-out clothes, like a nobleman who has fallen on hard times." },
+        female: { name: "Lady Regina Blackstone", description: "Victor’s estranged sister, living in the shadows. Dress in worn-out, old-world fashion, with an air of past grandeur." }
+      },
+      {
+        key: "bca",
+        male: { name: "Thaddeus Nightshade", description: "The curious neighbor with a dark secret. Dress in slightly eerie, eccentric fashion—dark colors, and strange accessories like an old-fashioned key or a lantern." },
+        female: { name: "Tabitha Nightshade", description: "The curious neighbor with a penchant for the paranormal. Gothic but quirky—imagine dark colors, quirky accessories like pendants, and a journal for her paranormal findings." }
+      },
+      {
+        key: "bab",
+        male: { name: "Reverend Ezekiel Whitmore", description: "The priest with a dark past and even darker intentions. Wear traditional priest’s robes, but with something sinister—like a hidden dagger or a cross necklace with a twist." },
+        female: { name: "Reverend Evelyn Whitmore", description: "The sinister priestess with a dark past. Traditional robes with an unsettling air, hiding something dangerous under the surface." }
+      },
+      {
+        key: "abc",
+        male: { name: "Benedict DeVries", description: "The lawyer caught in the family’s web of lies. A sharp suit, glasses, and a briefcase filled with suspicious legal documents—polished but hiding secrets." },
+        female: { name: "Bernadette DeVries", description: "A sharp lawyer, caught in the family’s web of secrets. A sleek suit or dress with a briefcase full of questionable paperwork." }
+      },
+      {
+        key: "acb",
+        male: { name: "Charles Whitman", description: "The journalist with a nose for scandals. Classic reporter attire: trench coat, fedora, and a notepad—always ready to uncover the next big scandal." },
+        female: { name: "Charlotte Whitman", description: "The sharp journalist ready to uncover scandal. Wear a trench coat, carry a notepad, and always be on the hunt for secrets." }
+      },
+      {
+        key: "cba",
+        male: { name: "Marcus LeStrange", description: "The ex-tutor with a tragic past. Wear old-world clothing, looking worn and tired—like someone haunted by past love." },
+        female: { name: "Miriam LeStrange", description: "The ex-governess with a tragic love story. Victorian-style governess outfit with a melancholy air. A high-necked dress, lace details, and a key to hidden secrets." }
+      },
+      {
+        key: "cab",
+        male: { name: "Percival Grimshaw", description: "The groundskeeper with a grim past. Rugged work clothes, boots, and perhaps a weathered hat—someone who’s spent too much time outside in the manor’s shadowy grounds." },
+        female: { name: "Prudence Grimshaw", description: "The mysterious groundskeeper with a troubled past. Wear sturdy outdoor clothes with a slightly ominous air, hinting at dark secrets." }
+      },
+      {
+        key: "cca",
+        male: { name: "Lord Walter Wigsnatch", description: "The shady heir, determined to claim what’s his. Dress in bold, gaudy elegance—loud colors and extravagant accessories with a look of arrogance." },
+        female: { name: "Lady Wanda Wigsnatch", description: "The shady heiress determined to claim her inheritance. Go for bold, gaudy elegance—bright colors, oversized jewelry, and an air of confidence that borders on arrogance." }
+      },
+      {
+        key: "cac",
+        male: { name: "Count Ivan Fortune", description: "The fortune-seeking nobleman. Dress in old-world luxury with a sinister edge—gold details and a cunning smile." },
+        female: { name: "Countess Ivanna Fortune", description: "A fortune seeker with her eyes on the Blackstone family’s wealth. Think of a ‘gold digger’ look—expensive taste, long gloves, and a seductive, mysterious edge." }
+      },
+      {
+        key: "baa",
+        male: { name: "Sir Dashington Bold", description: "The arrogant nobleman with shady business ties to the family. An old-school gentleman's suit, maybe with a monocle or a pocket watch—slightly arrogant and flashy." },
+        female: { name: "Lady Daphne Bold", description: "The flashy noblewoman with a bold personality. Dress in rich fabrics, extravagant jewelry, and a slightly haughty attitude." }
+      },
+      {
+        key: "cbc",
+        male: { name: "Marcus Minx", description: "A seductive and dangerous figure. Wear sleek, dark clothing, exuding mystery and charm—dangerous but alluring." },
+        female: { name: "Missy 'Murderess' Minx", description: "A femme fatale with dangerously seductive charm. Dress to kill—literally. A slinky red or black dress, high heels, and a sly, dangerous smile." }
+      },
+      {
+        key: "ccb",
+        male: { name: "Lord Henry Winterbourne", description: "A distant cousin with hidden ambitions. Dress in fine, aristocratic clothes, but with an aloof and cold demeanor." },
+        female: { name: "Lady Helena Winterbourne", description: "The distant cousin with a hidden claim to the family fortune. Classic aristocratic attire—pearls, a sleek dress, and a cool, detached air of privilege." }
+      },
+      {
+        key: "bac",
+        male: { name: "Sir Percival Poppycock", description: "A gossiping busybody with a flair for drama. Dress in flamboyant, old-world clothes with colorful accessories and plenty of attitude." },
+        female: { name: "Dame Petunia Poppycock", description: "The gossiping neighbor with eyes on the estate’s fortune. Bright, flamboyant attire with plenty of accessories—imagine an older lady who’s always in everyone’s business." }
+      }
+    ];
+
+    // Track assigned characters to prevent duplicates
+    let assignedCharacters = [];
+
+    // Store the result of the quiz
+    let quizResult = null;
+
+    // Show the quiz when "Start Quiz" is clicked
+    document.getElementById('startQuiz').addEventListener('click', function() {
+      document.getElementById('questionnaire').style.display = 'block';
+      this.style.display = 'none';
+    });
+
+    // Handle quiz submission
+    document.getElementById('submitQuiz').addEventListener('click', function() {
+      const answers = `${getSelectedValue('question1')}${getSelectedValue('question2')}${getSelectedValue('question3')}`;
+      quizResult = getMatchingCharacter(answers);
+
+      if (quizResult) {
+        document.getElementById('questionnaire').style.display = 'none';
+        document.getElementById('genderChoice').style.display = 'block';  // Show gender choice
+      } else {
+        document.getElementById('character').innerHTML = `Sorry, all matching characters have been assigned. Please try again later.`;
+      }
+    });
+
+    // Handle gender choice
+    document.getElementById('maleChoice').addEventListener('click', function() {
+      assignCharacter('male');
+    });
+    
+    document.getElementById('femaleChoice').addEventListener('click', function() {
+      assignCharacter('female');
+    });
+
+    // Function to assign a character based on the selected gender
+    function assignCharacter(gender) {
+      const character = quizResult[gender];
+
+      if (character && !assignedCharacters.includes(character.name)) {
+        document.getElementById('character').innerHTML = `You are assigned: <strong>${character.name}</strong> - ${character.description}`;
+        assignedCharacters.push(character.name);  // Mark character as assigned
+        document.getElementById('genderChoice').style.display = 'none';  // Hide the gender choice
+      } else {
+        document.getElementById('character').innerHTML = `Sorry, this character has already been assigned.`;
+      }
+    }
+
+    // Function to get the selected value of a question
+    function getSelectedValue(questionName) {
+      const options = document.getElementsByName(questionName);
+      for (const option of options) {
+        if (option.checked) {
+          return option.value;
+        }
+      }
+      return null;
+    }
+
+    // Function to match answers to a character and ensure no duplicate assignment
+    function getMatchingCharacter(answers) {
+      for (const character of characters) {
+        if (character.key === answers) {
+          return character;
+        }
+      }
+      return null;  // Return null if no available match
+    }
+  </script>
+</body>
+</html>
