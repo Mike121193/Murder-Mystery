@@ -229,6 +229,7 @@
         document.getElementById('character').innerHTML = `You are assigned: <strong>${character.name}</strong> - ${character.description}`;
         assignedCharacters.push(character.name);  // Mark character as assigned
         document.getElementById('genderChoice').style.display = 'none';  // Hide the gender choice
+        document.getElementById('character').style.display = 'block';  // Show assigned character
       } else {
         document.getElementById('character').innerHTML = `Sorry, this character has already been assigned.`;
       }
