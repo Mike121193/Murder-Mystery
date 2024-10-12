@@ -185,9 +185,10 @@
     // Handle quiz submission
     document.getElementById('submitQuiz').addEventListener('click', function() {
       const answers = `${getSelectedValue('question1')}${getSelectedValue('question2')}${getSelectedValue('question3')}${getSelectedValue('question4')}${getSelectedValue('question5')}`;
-      temporaryCharacter = getMatchingCharacter(answers, selectedGender);
+      const availableCharacter = getMatchingCharacter(answers, selectedGender);
 
-      if (temporaryCharacter) {
+      if (availableCharacter) {
+        temporaryCharacter = availableCharacter;
         document.getElementById('questionnaire').style.display = 'none';
         document.getElementById('character').innerHTML = `You are assigned: <strong>${temporaryCharacter.name}</strong> - ${temporaryCharacter.description}`;
         document.getElementById('character').style.display = 'block';
@@ -202,9 +203,10 @@
     // Handle alternative quiz submission
     document.getElementById('submitAlternativeQuiz').addEventListener('click', function() {
       const altAnswers = `${getSelectedValue('altQuestion1')}${getSelectedValue('altQuestion2')}`;
-      temporaryCharacter = getMatchingAlternativeCharacter(altAnswers, selectedGender);
+      const availableAltCharacter = getMatchingAlternativeCharacter(altAnswers, selectedGender);
 
-      if (temporaryCharacter) {
+      if (availableAltCharacter) {
+        temporaryCharacter = availableAltCharacter;
         document.getElementById('alternativeQuestions').style.display = 'none';
         document.getElementById('character').innerHTML = `You are assigned: <strong>${temporaryCharacter.name}</strong> - ${temporaryCharacter.description}`;
         document.getElementById('character').style.display = 'block';
