@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fabulor Manor Character Assignment</title>
+  <title>Fabulor Manor - Random Character Allocation</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -16,237 +16,231 @@
       font-size: 3em;
       margin-bottom: 20px;
     }
-    p {
-      font-size: 1.2em;
-      margin-bottom: 30px;
-    }
-    .questionnaire, .character, .genderSelection, .alternativeQuestions, .confirmation, .noMatchMessage {
-      display: none;
-      margin-bottom: 30px;
-    }
-    .character {
-      font-size: 1.5em;
-      font-weight: bold;
+    .genderSelection, .characterDisplay, .resetButton {
+      margin-top: 30px;
     }
     button {
-      padding: 10px 20px;
+      padding: 15px 25px;
       font-size: 1.2em;
+      margin: 10px;
       cursor: pointer;
       background-color: #ff4d4d;
       color: white;
       border: none;
       border-radius: 5px;
+      transition: background-color 0.3s;
     }
     button:hover {
       background-color: #e63e3e;
+    }
+    button:disabled {
+      background-color: #888;
+      cursor: not-allowed;
+    }
+    .characterCard {
+      background-color: #2d2d3f;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px auto;
+      width: 80%;
+      max-width: 600px;
+      text-align: left;
+    }
+    .characterCard h2 {
+      margin-top: 0;
+    }
+    .noCharacters {
+      color: #ffcccc;
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+    .resetButton button {
+      background-color: #4CAF50;
+    }
+    .resetButton button:hover {
+      background-color: #45a049;
     }
   </style>
 </head>
 <body>
   <h1>Fabulor Manor</h1>
-  <p>Select your gender first, then take a short quiz to discover your perfect character for the evening!</p>
-
-  <!-- Step 1: Gender Selection -->
+  <p>Select your preferred gender to be randomly assigned a character with a detailed outfit description!</p>
+  
+  <!-- Gender Selection Section -->
   <div class="genderSelection" id="genderSelection">
-    <p>Would you prefer to be a male or female character?</p>
-    <button id="maleChoice">Male</button>
-    <button id="femaleChoice">Female</button>
+    <button id="maleButton">Male</button>
+    <button id="femaleButton">Female</button>
   </div>
-
-  <!-- Step 2: Quiz Questions -->
-  <div class="questionnaire" id="questionnaire">
-    <p>1. How would you describe your personality?</p>
-    <input type="radio" id="a1" name="question1" value="a"> Bold and eccentric <br>
-    <input type="radio" id="b1" name="question1" value="b"> Mysterious and reserved <br>
-    <input type="radio" id="c1" name="question1" value="c"> Charming and seductive <br>
-    
-    <p>2. What’s your favorite way to spend a weekend?</p>
-    <input type="radio" id="a2" name="question2" value="a"> Hosting fabulous parties <br>
-    <input type="radio" id="b2" name="question2" value="b"> Solving puzzles or mysteries <br>
-    <input type="radio" id="c2" name="question2" value="c"> Planning revenge <br>
-
-    <p>3. How would others describe your style?</p>
-    <input type="radio" id="a3" name="question3" value="a"> Glamorous and attention-grabbing <br>
-    <input type="radio" id="b3" name="question3" value="b"> Classic and timeless <br>
-    <input type="radio" id="c3" name="question3" value="c"> Elegant but dangerous <br>
-
-    <!-- Additional questions -->
-    <p>4. What’s your biggest fear?</p>
-    <input type="radio" id="a4" name="question4" value="a"> Losing control <br>
-    <input type="radio" id="b4" name="question4" value="b"> Being forgotten <br>
-    <input type="radio" id="c4" name="question4" value="c"> Betrayal by loved ones <br>
-
-    <p>5. What’s your ultimate goal in life?</p>
-    <input type="radio" id="a5" name="question5" value="a"> Wealth and power <br>
-    <input type="radio" id="b5" name="question5" value="b"> Knowledge and discovery <br>
-    <input type="radio" id="c5" name="question5" value="c"> Revenge or redemption <br>
-
-    <button id="submitQuiz">Submit Answers</button>
+  
+  <!-- Character Display Section -->
+  <div class="characterDisplay" id="characterDisplay"></div>
+  
+  <!-- Reset Button Section -->
+  <div class="resetButton" id="resetButton" style="display: none;">
+    <button id="resetAssignments">Reset All Assignments</button>
   </div>
-
-  <!-- Step 3: No Matching Character Message -->
-  <div class="noMatchMessage" id="noMatchMessage">
-    <p>No matching combinations found, try answering these alternative questions to find a match.</p>
-  </div>
-
-  <!-- Step 4: Alternative Questions for Backup Character -->
-  <div class="alternativeQuestions" id="alternativeQuestions">
-    <p>Let's find you a backup character with these quick questions:</p>
-
-    <p>1. Which element do you connect with most?</p>
-    <input type="radio" id="alt1" name="altQuestion1" value="a"> Fire <br>
-    <input type="radio" id="alt2" name="altQuestion1" value="b"> Water <br>
-    <input type="radio" id="alt3" name="altQuestion1" value="c"> Earth <br>
-
-    <p>2. What’s your favorite time of day?</p>
-    <input type="radio" id="alt4" name="altQuestion2" value="a"> Morning <br>
-    <input type="radio" id="alt5" name="altQuestion2" value="b"> Afternoon <br>
-    <input type="radio" id="alt6" name="altQuestion2" value="c"> Night <br>
-
-    <button id="submitAlternativeQuiz">Submit Alternative Answers</button>
-  </div>
-
-  <!-- Step 5: Display assigned character -->
-  <div class="character" id="character"></div>
-
-  <!-- Step 6: Confirmation -->
-  <div class="confirmation" id="confirmation">
-    <p>Are you happy with your assigned character?</p>
-    <button id="confirmCharacter">Yes, Confirm</button>
-    <button id="restartQuiz">No, Restart</button>
-  </div>
-
-  <!-- Reset Button for Assigned Characters -->
-  <button id="resetAssignedCharacters">Reset Assigned Characters</button>
-
+  
   <script>
-    // Track selected gender (male or female)
-    let selectedGender = null;
-    let temporaryCharacter = null; // Temporarily holds the character before confirmation
-
-    // Expanded Character array with male and female versions mapped to quiz answers
+    // Character Data
     const characters = [
-      // [Your character data here...]
+      {
+        name: "Victor Blackstone",
+        gender: "male",
+        description: "The eccentric host who ends up dead. Dress in opulent, gothic attire: velvet smoking jacket, cane, vintage brooch. Think mysterious but wealthy."
+      },
+      {
+        name: "Victoria Blackstone",
+        gender: "female",
+        description: "The eccentric hostess, known for her elaborate and gothic parties. Dress in luxurious Victorian-inspired attire with bold makeup."
+      },
+      {
+        name: "Count Orson Blackthorn",
+        gender: "male",
+        description: "The reclusive uncle with a dark obsession. Dress in dark, old-world attire: long coat, top hat, air of mystery."
+      },
+      {
+        name: "Countess Ophelia Blackthorn",
+        gender: "female",
+        description: "The reclusive aunt with a dark obsession. Victorian widow: lace, high collar, veil, black and silver jewelry."
+      },
+      {
+        name: "Dr. Frederick Devereux",
+        gender: "male",
+        description: "The family doctor who knows too much. Dress in a vintage doctor’s coat with old-world medical tools."
+      },
+      {
+        name: "Dr. Francesca Devereux",
+        gender: "female",
+        description: "The family doctor with secrets. Wear vintage medical coat, leather gloves, dramatic old-world stethoscope."
+      },
+      {
+        name: "Lord Vincent Van Buren",
+        gender: "male",
+        description: "The vengeful former lover. Sharp classic tailoring with a dark edge: plotting revenge."
+      },
+      {
+        name: "Lady Vivienne Van Buren",
+        gender: "female",
+        description: "Victor’s former lover with a vengeful heart. Old Hollywood glam: fur stole, long satin gloves, dress that screams ‘drama’."
+      },
+      {
+        name: "Sebastian Crowe",
+        gender: "male",
+        description: "The sneaky butler. Wear a formal tuxedo with a sly grin and a mysterious air."
+      },
+      {
+        name: "Serena Crowe",
+        gender: "female",
+        description: "The sneaky maid. Dress in a classic maid outfit with a touch of gothic flair, adding a suspicious demeanor."
+      },
+      {
+        name: "Edward Halloway",
+        gender: "male",
+        description: "The scholarly but paranoid advisor. Dress in tweed and a bowtie, carrying a book or scrolls."
+      },
+      {
+        name: "Edith Halloway",
+        gender: "female",
+        description: "The scholarly but paranoid librarian. Dress in vintage, bookish attire with spectacles and a stack of old tomes."
+      },
+      {
+        name: "Baron Alexander Nightshade",
+        gender: "male",
+        description: "The power-hungry lord with a dark secret. Regal outfit with a dark cloak and a cunning expression."
+      },
+      {
+        name: "Baroness Alexandra Nightshade",
+        gender: "female",
+        description: "The ambitious lady with an air of danger. Elegant, dark-toned attire, hinting at hidden power."
+      },
+      {
+        name: "Archibald Vane",
+        gender: "male",
+        description: "The ambitious cousin who wants the family fortune. Sharp, stylish clothing with a hint of menace."
+      },
+      {
+        name: "Angelica Vane",
+        gender: "female",
+        description: "The ambitious cousin who craves control. Chic, modern formalwear, showing subtle but dangerous elegance."
+      },
+      {
+        name: "Lord Gideon Grey",
+        gender: "male",
+        description: "The family lawyer with too many secrets. Formal suit with a briefcase and a nervous look."
+      },
+      {
+        name: "Lady Genevieve Grey",
+        gender: "female",
+        description: "The family lawyer with hidden motives. Sophisticated pantsuit with a touch of calculated mystery."
+      }
     ];
-
-    // Alternative character array
-    const alternativeCharacters = [
-      // [Your alternative character data here...]
-    ];
-
-    // Reset assigned characters array - this ensures a fresh start on page load
+    
+    // Track assigned characters
     let assignedCharacters = [];
-
-    // Show the gender selection when the page loads
-    document.getElementById('genderSelection').style.display = 'block';
-
-    // Handle gender selection
-    document.getElementById('maleChoice').addEventListener('click', function() {
-      selectedGender = 'male';
-      startQuiz();
+    
+    // DOM Elements
+    const maleButton = document.getElementById('maleButton');
+    const femaleButton = document.getElementById('femaleButton');
+    const characterDisplay = document.getElementById('characterDisplay');
+    const resetButton = document.getElementById('resetButton');
+    const resetAssignments = document.getElementById('resetAssignments');
+    
+    // Function to get available characters based on gender
+    function getAvailableCharacters(gender) {
+      return characters.filter(char => char.gender === gender && !assignedCharacters.includes(char.name));
+    }
+    
+    // Function to randomly select a character
+    function selectRandomCharacter(gender) {
+      const available = getAvailableCharacters(gender);
+      if (available.length === 0) {
+        return null;
+      }
+      const randomIndex = Math.floor(Math.random() * available.length);
+      return available[randomIndex];
+    }
+    
+    // Function to display the character
+    function displayCharacter(character) {
+      characterDisplay.innerHTML = `
+        <div class="characterCard">
+          <h2>${character.name}</h2>
+          <p>${character.description}</p>
+        </div>
+      `;
+      resetButton.style.display = 'block';
+    }
+    
+    // Event Listeners for Gender Selection
+    maleButton.addEventListener('click', () => {
+      const character = selectRandomCharacter('male');
+      if (character) {
+        assignedCharacters.push(character.name);  // Ensure no duplicates
+        displayCharacter(character);
+      } else {
+        characterDisplay.innerHTML = `<p class="noCharacters">No available male characters left!</p>`;
+        resetButton.style.display = 'block';
+      }
     });
     
-    document.getElementById('femaleChoice').addEventListener('click', function() {
-      selectedGender = 'female';
-      startQuiz();
-    });
-
-    // Start the quiz after gender is selected
-    function startQuiz() {
-      document.getElementById('genderSelection').style.display = 'none';
-      document.getElementById('questionnaire').style.display = 'block';
-    }
-
-    // Handle quiz submission
-    document.getElementById('submitQuiz').addEventListener('click', function() {
-      const answers = `${getSelectedValue('question1')}${getSelectedValue('question2')}${getSelectedValue('question3')}${getSelectedValue('question4')}${getSelectedValue('question5')}`;
-      const availableCharacter = getMatchingCharacter(answers, selectedGender);
-
-      if (availableCharacter) {
-        temporaryCharacter = availableCharacter;
-        document.getElementById('questionnaire').style.display = 'none';
-        document.getElementById('character').innerHTML = `You are assigned: <strong>${temporaryCharacter.name}</strong> - ${temporaryCharacter.description}`;
-        document.getElementById('character').style.display = 'block';
-        document.getElementById('confirmation').style.display = 'block';  // Show confirmation
+    femaleButton.addEventListener('click', () => {
+      const character = selectRandomCharacter('female');
+      if (character) {
+        assignedCharacters.push(character.name);  // Ensure no duplicates
+        displayCharacter(character);
       } else {
-        // If no matching character available, show alternative questions
-        document.getElementById('questionnaire').style.display = 'none';
-        document.getElementById('noMatchMessage').style.display = 'block';
-        document.getElementById('alternativeQuestions').style.display = 'block';
+        characterDisplay.innerHTML = `<p class="noCharacters">No available female characters left!</p>`;
+        resetButton.style.display = 'block';
       }
     });
-
-    // Handle alternative quiz submission
-    document.getElementById('submitAlternativeQuiz').addEventListener('click', function() {
-      const altAnswers = `${getSelectedValue('altQuestion1')}${getSelectedValue('altQuestion2')}`;
-      const availableAltCharacter = getMatchingAlternativeCharacter(altAnswers, selectedGender);
-
-      if (availableAltCharacter) {
-        temporaryCharacter = availableAltCharacter;
-        document.getElementById('alternativeQuestions').style.display = 'none';
-        document.getElementById('character').innerHTML = `You are assigned: <strong>${temporaryCharacter.name}</strong> - ${temporaryCharacter.description}`;
-        document.getElementById('character').style.display = 'block';
-        document.getElementById('confirmation').style.display = 'block';  // Show confirmation
-      } else {
-        document.getElementById('character').innerHTML = `Sorry, all backup characters have also been assigned.`;
-        document.getElementById('character').style.display = 'block';
-      }
+    
+    // Event Listener for Reset Assignments
+    resetAssignments.addEventListener('click', () => {
+      assignedCharacters = [];  // Clear all assignments
+      characterDisplay.innerHTML = '';
+      resetButton.style.display = 'none';
+      alert('All character assignments have been reset!');
     });
-
-    // Function to get the selected value of a question
-    function getSelectedValue(questionName) {
-      const options = document.getElementsByName(questionName);
-      for (const option of options) {
-        if (option.checked) {
-          return option.value;
-        }
-      }
-      return null;
-    }
-
-    // Function to match answers to a character based on gender
-    function getMatchingCharacter(answers, gender) {
-      for (const character of characters) {
-        if (character.key === answers && !assignedCharacters.includes(character[gender].name)) {
-          return character[gender];
-        }
-      }
-      return null;  // Return null if no available match
-    }
-
-    // Function to match answers to an alternative character based on gender
-    function getMatchingAlternativeCharacter(answers, gender) {
-      for (const character of alternativeCharacters) {
-        if (character.key === answers && !assignedCharacters.includes(character[gender].name)) {
-          return character[gender];
-        }
-      }
-      return null;  // Return null if no available alternative match
-    }
-
-    // Confirmation handler - lock in character after confirmation
-    document.getElementById('confirmCharacter').addEventListener('click', function() {
-      if (temporaryCharacter) {
-        assignedCharacters.push(temporaryCharacter.name);  // Mark character as taken
-        document.getElementById('confirmation').style.display = 'none';
-        document.getElementById('character').innerHTML += `<p>Your character is confirmed! No one else can choose this character.</p>`;
-      }
-    });
-
-    // Handle restart if the guest is not happy with the assigned character
-    document.getElementById('restartQuiz').addEventListener('click', function() {
-      temporaryCharacter = null;
-      document.getElementById('confirmation').style.display = 'none';
-      document.getElementById('questionnaire').style.display = 'block';  // Restart the quiz
-      document.getElementById('character').style.display = 'none';  // Hide character display
-    });
-
-    // Reset assigned characters handler
-    document.getElementById('resetAssignedCharacters').addEventListener('click', function() {
-      assignedCharacters = [];  // Clears all assigned characters
-      alert('All assigned characters have been reset!');
-    });
-
   </script>
 </body>
 </html>
