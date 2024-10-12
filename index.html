@@ -154,4 +154,122 @@
       },
       {
         key: "bb",
-        male: { name: "Captain William
+        male: { name: "Captain William Waters", description: "A stoic sailor with a mysterious past. Dress in naval attire, with sea-worn accessories like a compass or telescope." },
+        female: { name: "Captain Wilhelmina Waters", description: "A tough sea captain with a cool demeanor. Dress in naval-inspired fashion, with a hint of adventure." }
+      },
+      {
+        key: "cc",
+        male: { name: "Sir Edmund Earthborn", description: "A grounded and practical nobleman with ties to the land. Wear earthy tones, sturdy boots, and a walking stick." },
+        female: { name: "Lady Evelyn Earthborn", description: "A noblewoman deeply connected to nature. Dress in earth-toned, flowing fabrics, with natural accessories like flowers." }
+      }
+    ];
+
+    // Reset assigned characters array - this ensures a fresh start on page load
+    let assignedCharacters = [];
+
+    // Show the gender selection when the page loads
+    document.getElementById('genderSelection').style.display = 'block';
+
+    // Handle gender selection
+    document.getElementById('maleChoice').addEventListener('click', function() {
+      selectedGender = 'male';
+      startQuiz();
+    });
+    
+    document.getElementById('femaleChoice').addEventListener('click', function() {
+      selectedGender = 'female';
+      startQuiz();
+    });
+
+    // Start the quiz after gender is selected
+    function startQuiz() {
+      document.getElementById('genderSelection').style.display = 'none';
+      document.getElementById('questionnaire').style.display = 'block';
+    }
+
+    // Handle quiz submission
+    document.getElementById('submitQuiz').addEventListener('click', function() {
+      const answers = `${getSelectedValue('question1')}${getSelectedValue('question2')}${getSelectedValue('question3')}${getSelectedValue('question4')}${getSelectedValue('question5')}`;
+      const availableCharacter = getMatchingCharacter(answers, selectedGender);
+
+      if (availableCharacter) {
+        temporaryCharacter = availableCharacter;
+        document.getElementById('questionnaire').style.display = 'none';
+        document.getElementById('character').innerHTML = `You are assigned: <strong>${temporaryCharacter.name}</strong> - ${temporaryCharacter.description}`;
+        document.getElementById('character').style.display = 'block';
+        document.getElementById('confirmation').style.display = 'block';  // Show confirmation
+      } else {
+        // If no matching character available, show alternative questions
+        document.getElementById('questionnaire').style.display = 'none';
+        document.getElementById('noMatchMessage').style.display = 'block';
+        document.getElementById('alternativeQuestions').style.display = 'block';
+      }
+    });
+
+    // Handle alternative quiz submission
+    document.getElementById('submitAlternativeQuiz').addEventListener('click', function() {
+      const altAnswers = `${getSelectedValue('altQuestion1')}${getSelectedValue('altQuestion2')}`;
+      const availableAltCharacter = getMatchingAlternativeCharacter(altAnswers, selectedGender);
+
+      if (availableAltCharacter) {
+        temporaryCharacter = availableAltCharacter;
+        document.getElementById('alternativeQuestions').style.display = 'none';
+        document.getElementById('character').innerHTML = `You are assigned: <strong>${temporaryCharacter.name}</strong> - ${temporaryCharacter.description}`;
+        document.getElementById('character').style.display = 'block';
+        document.getElementById('confirmation').style.display = 'block';  // Show confirmation
+      } else {
+        document.getElementById('character').innerHTML = `Sorry, all backup characters have also been assigned.`;
+        document.getElementById('character').style.display = 'block';
+      }
+    });
+
+    // Function to get the selected value of a question
+    function getSelectedValue(questionName) {
+      const options = document.getElementsByName(questionName);
+      for (const option of options) {
+        if (option.checked) {
+          return option.value;
+        }
+      }
+      return null;
+    }
+
+    // Function to match answers to a character based on gender
+    function getMatchingCharacter(answers, gender) {
+      for (const character of characters) {
+        if (character.key === answers && !assignedCharacters.includes(character[gender].name)) {
+          return character[gender];
+        }
+      }
+      return null;  // Return null if no available match
+    }
+
+    // Function to match answers to an alternative character based on gender
+    function getMatchingAlternativeCharacter(answers, gender) {
+      for (const character of alternativeCharacters) {
+        if (character.key === answers && !assignedCharacters.includes(character[gender].name)) {
+          return character[gender];
+        }
+      }
+      return null;  // Return null if no available alternative match
+    }
+
+    // Confirmation handler - lock in character after confirmation
+    document.getElementById('confirmCharacter').addEventListener('click', function() {
+      if (temporaryCharacter) {
+        assignedCharacters.push(temporaryCharacter.name);  // Mark character as taken
+        document.getElementById('confirmation').style.display = 'none';
+        document.getElementById('character').innerHTML += `<p>Your character is confirmed! No one else can choose this character.</p>`;
+      }
+    });
+
+    // Handle restart if the guest is not happy with the assigned character
+    document.getElementById('restartQuiz').addEventListener('click', function() {
+      temporaryCharacter = null;
+      document.getElementById('confirmation').style.display = 'none';
+      document.getElementById('questionnaire').style.display = 'block';  // Restart the quiz
+      document.getElementById('character').style.display = 'none';  // Hide character display
+    });
+  </script>
+</body>
+</html>
