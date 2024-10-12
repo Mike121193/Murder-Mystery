@@ -20,7 +20,7 @@
       font-size: 1.2em;
       margin-bottom: 30px;
     }
-    .questionnaire, .character, .genderSelection, .alternativeQuestions {
+    .questionnaire, .character, .genderSelection, .alternativeQuestions, .confirmation {
       display: none;
       margin-bottom: 30px;
     }
@@ -104,9 +104,17 @@
   <!-- Step 4: Display assigned character -->
   <div class="character" id="character"></div>
 
+  <!-- Step 5: Confirmation -->
+  <div class="confirmation" id="confirmation">
+    <p>Are you happy with your assigned character?</p>
+    <button id="confirmCharacter">Yes, Confirm</button>
+    <button id="restartQuiz">No, Restart</button>
+  </div>
+
   <script>
     // Track selected gender (male or female)
     let selectedGender = null;
+    let temporaryCharacter = null; // Temporarily holds the character before confirmation
 
     // Character array with male and female versions mapped to quiz answers
     const characters = [
@@ -178,13 +186,13 @@
     // Handle quiz submission
     document.getElementById('submitQuiz').addEventListener('click', function() {
       const answers = `${getSelectedValue('question1')}${getSelectedValue('question2')}${getSelectedValue('question3')}${getSelectedValue('question4')}${getSelectedValue('question5')}`;
-      const character = getMatchingCharacter(answers, selectedGender);
+      temporaryCharacter = getMatchingCharacter(answers, selectedGender);
 
-      if (character) {
+      if (temporaryCharacter) {
         document.getElementById('questionnaire').style.display = 'none';
-        document.getElementById('character').innerHTML = `You are assigned: <strong>${character.name}</strong> - ${character.description}`;
-        assignedCharacters.push(character.name);  // Mark character as assigned
-        document.getElementById('character').style.display = 'block';  // Show assigned character
+        document.getElementById('character').innerHTML = `You are assigned: <strong>${temporaryCharacter.name}</strong> - ${temporaryCharacter.description}`;
+        document.getElementById('character').style.display = 'block';
+        document.getElementById('confirmation').style.display = 'block';  // Show confirmation
       } else {
         // If no matching character available, show alternative questions
         document.getElementById('questionnaire').style.display = 'none';
@@ -195,13 +203,13 @@
     // Handle alternative quiz submission
     document.getElementById('submitAlternativeQuiz').addEventListener('click', function() {
       const altAnswers = `${getSelectedValue('altQuestion1')}${getSelectedValue('altQuestion2')}`;
-      const altCharacter = getMatchingAlternativeCharacter(altAnswers, selectedGender);
+      temporaryCharacter = getMatchingAlternativeCharacter(altAnswers, selectedGender);
 
-      if (altCharacter) {
+      if (temporaryCharacter) {
         document.getElementById('alternativeQuestions').style.display = 'none';
-        document.getElementById('character').innerHTML = `You are assigned: <strong>${altCharacter.name}</strong> - ${altCharacter.description}`;
-        assignedCharacters.push(altCharacter.name);  // Mark character as assigned
-        document.getElementById('character').style.display = 'block';  // Show assigned character
+        document.getElementById('character').innerHTML = `You are assigned: <strong>${temporaryCharacter.name}</strong> - ${temporaryCharacter.description}`;
+        document.getElementById('character').style.display = 'block';
+        document.getElementById('confirmation').style.display = 'block';  // Show confirmation
       } else {
         document.getElementById('character').innerHTML = `Sorry, all backup characters have also been assigned.`;
         document.getElementById('character').style.display = 'block';
@@ -238,6 +246,23 @@
       }
       return null;  // Return null if no available alternative match
     }
+
+    // Confirmation handler - lock in character after confirmation
+    document.getElementById('confirmCharacter').addEventListener('click', function() {
+      if (temporaryCharacter) {
+        assignedCharacters.push(temporaryCharacter.name);  // Mark character as taken
+        document.getElementById('confirmation').style.display = 'none';
+        document.getElementById('character').innerHTML += `<p>Your character is confirmed! No one else can choose this character.</p>`;
+      }
+    });
+
+    // Handle restart if the guest is not happy with the assigned character
+    document.getElementById('restartQuiz').addEventListener('click', function() {
+      temporaryCharacter = null;
+      document.getElementById('confirmation').style.display = 'none';
+      document.getElementById('questionnaire').style.display = 'block';  // Restart the quiz
+      document.getElementById('character').style.display = 'none';  // Hide character display
+    });
   </script>
 </body>
 </html>
