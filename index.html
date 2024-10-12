@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fabulor Manor Character Assignment</title>
   <style>
     body {
@@ -20,7 +19,7 @@
       font-size: 1.2em;
       margin-bottom: 30px;
     }
-    .questionnaire, .character, .genderSelection {
+    .questionnaire, .character, .genderSelection, .alternativeQuestions {
       display: none;
       margin-bottom: 30px;
     }
@@ -39,9 +38,6 @@
     }
     button:hover {
       background-color: #e63e3e;
-    }
-    .hidden {
-      display: none;
     }
   </style>
 </head>
@@ -73,10 +69,38 @@
     <input type="radio" id="b3" name="question3" value="b"> Classic and timeless <br>
     <input type="radio" id="c3" name="question3" value="c"> Elegant but dangerous <br>
 
+    <!-- Additional questions -->
+    <p>4. What’s your biggest fear?</p>
+    <input type="radio" id="a4" name="question4" value="a"> Losing control <br>
+    <input type="radio" id="b4" name="question4" value="b"> Being forgotten <br>
+    <input type="radio" id="c4" name="question4" value="c"> Betrayal by loved ones <br>
+
+    <p>5. What’s your ultimate goal in life?</p>
+    <input type="radio" id="a5" name="question5" value="a"> Wealth and power <br>
+    <input type="radio" id="b5" name="question5" value="b"> Knowledge and discovery <br>
+    <input type="radio" id="c5" name="question5" value="c"> Revenge or redemption <br>
+
     <button id="submitQuiz">Submit Answers</button>
   </div>
 
-  <!-- Step 3: Display assigned character -->
+  <!-- Step 3: Alternative Questions for Backup Character -->
+  <div class="alternativeQuestions" id="alternativeQuestions">
+    <p>It seems the characters based on your original answers have been taken. Let's find you a backup character with these quick questions:</p>
+
+    <p>1. Which element do you connect with most?</p>
+    <input type="radio" id="alt1" name="altQuestion1" value="a"> Fire <br>
+    <input type="radio" id="alt2" name="altQuestion1" value="b"> Water <br>
+    <input type="radio" id="alt3" name="altQuestion1" value="c"> Earth <br>
+
+    <p>2. What’s your favorite time of day?</p>
+    <input type="radio" id="alt4" name="altQuestion2" value="a"> Morning <br>
+    <input type="radio" id="alt5" name="altQuestion2" value="b"> Afternoon <br>
+    <input type="radio" id="alt6" name="altQuestion2" value="c"> Night <br>
+
+    <button id="submitAlternativeQuiz">Submit Alternative Answers</button>
+  </div>
+
+  <!-- Step 4: Display assigned character -->
   <div class="character" id="character"></div>
 
   <script>
@@ -86,29 +110,48 @@
     // Character array with male and female versions mapped to quiz answers
     const characters = [
       {
-        key: "aaa",
+        key: "aaaaa",
         male: { name: "Victor Blackstone", description: "The eccentric host who ends up dead. Dress in opulent, gothic attire, perhaps a velvet smoking jacket, cane, and vintage brooch. Think mysterious but wealthy." },
         female: { name: "Victoria Blackstone", description: "The eccentric hostess, known for her elaborate and gothic parties. Dress in luxurious Victorian-inspired attire with bold makeup." }
       },
       {
-        key: "bbb",
+        key: "bbbbb",
         male: { name: "Count Orson Blackthorn", description: "The reclusive uncle with a dark obsession. Dress in dark, old-world attire, like a long coat and top hat, with an air of mystery." },
         female: { name: "Countess Ophelia Blackthorn", description: "The reclusive aunt with a dark obsession. Imagine a Victorian widow, complete with lace, high collar, and a veil. Lots of black and silver jewelry." }
       },
       {
-        key: "aac",
+        key: "ccccc",
         male: { name: "Dr. Frederick Devereux", description: "The family doctor who knows too much. Dress in a vintage doctor’s coat, with old-world medical tools and a slight air of creepiness." },
         female: { name: "Dr. Francesca Devereux", description: "The family doctor with more secrets than remedies. Wear a vintage medical coat with chic accessories, like leather gloves and a dramatic, old-world stethoscope." }
       },
       {
-        key: "ccc",
+        key: "cacac",
         male: { name: "Lord Vincent Van Buren", description: "The vengeful former lover. Dress in sharp, classic tailoring with a dark edge—like someone who’s plotting revenge." },
         female: { name: "Lady Vivienne Van Buren", description: "Victor’s former lover with a vengeful heart. Channel Old Hollywood glam, with a fur stole, long satin gloves, and a dress that screams ‘drama’." }
       }
       // Add more characters as needed...
     ];
 
-    // Track assigned characters to prevent duplicates
+    // Alternative character array
+    const alternativeCharacters = [
+      {
+        key: "aa",
+        male: { name: "Lord Archibald Flame", description: "A fiery-tempered aristocrat with a passion for power. Dress in bold, fiery colors with a touch of old-world elegance." },
+        female: { name: "Lady Amelia Flame", description: "A bold, fiery woman known for her temper and ambition. Dress in red and gold, with a flair for the dramatic." }
+      },
+      {
+        key: "bb",
+        male: { name: "Captain William Waters", description: "A stoic sailor with a mysterious past. Dress in naval attire, with sea-worn accessories like a compass or telescope." },
+        female: { name: "Captain Wilhelmina Waters", description: "A tough sea captain with a cool demeanor. Dress in naval-inspired fashion, with a hint of adventure." }
+      },
+      {
+        key: "cc",
+        male: { name: "Sir Edmund Earthborn", description: "A grounded and practical nobleman with ties to the land. Wear earthy tones, sturdy boots, and a walking stick." },
+        female: { name: "Lady Evelyn Earthborn", description: "A noblewoman deeply connected to nature. Dress in earth-toned, flowing fabrics, with natural accessories like flowers." }
+      }
+    ];
+
+    // Reset assigned characters array
     let assignedCharacters = [];
 
     // Show the gender selection when the page loads
@@ -133,7 +176,7 @@
 
     // Handle quiz submission
     document.getElementById('submitQuiz').addEventListener('click', function() {
-      const answers = `${getSelectedValue('question1')}${getSelectedValue('question2')}${getSelectedValue('question3')}`;
+      const answers = `${getSelectedValue('question1')}${getSelectedValue('question2')}${getSelectedValue('question3')}${getSelectedValue('question4')}${getSelectedValue('question5')}`;
       const character = getMatchingCharacter(answers, selectedGender);
 
       if (character) {
@@ -142,7 +185,24 @@
         assignedCharacters.push(character.name);  // Mark character as assigned
         document.getElementById('character').style.display = 'block';  // Show assigned character
       } else {
-        document.getElementById('character').innerHTML = `Sorry, all matching characters have been assigned. Please try again later.`;
+        // If no matching character available, show alternative questions
+        document.getElementById('questionnaire').style.display = 'none';
+        document.getElementById('alternativeQuestions').style.display = 'block';
+      }
+    });
+
+    // Handle alternative quiz submission
+    document.getElementById('submitAlternativeQuiz').addEventListener('click', function() {
+      const altAnswers = `${getSelectedValue('altQuestion1')}${getSelectedValue('altQuestion2')}`;
+      const altCharacter = getMatchingAlternativeCharacter(altAnswers, selectedGender);
+
+      if (altCharacter) {
+        document.getElementById('alternativeQuestions').style.display = 'none';
+        document.getElementById('character').innerHTML = `You are assigned: <strong>${altCharacter.name}</strong> - ${altCharacter.description}`;
+        assignedCharacters.push(altCharacter.name);  // Mark character as assigned
+        document.getElementById('character').style.display = 'block';  // Show assigned character
+      } else {
+        document.getElementById('character').innerHTML = `Sorry, all backup characters have also been assigned.`;
         document.getElementById('character').style.display = 'block';
       }
     });
@@ -166,6 +226,16 @@
         }
       }
       return null;  // Return null if no available match
+    }
+
+    // Function to match answers to an alternative character based on gender
+    function getMatchingAlternativeCharacter(answers, gender) {
+      for (const character of alternativeCharacters) {
+        if (character.key === answers && !assignedCharacters.includes(character[gender].name)) {
+          return character[gender];
+        }
+      }
+      return null;  // Return null if no available alternative match
     }
   </script>
 </body>
