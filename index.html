@@ -20,7 +20,7 @@
       font-size: 1.2em;
       margin-bottom: 30px;
     }
-    .questionnaire, .character, .genderSelection, .alternativeQuestions, .confirmation {
+    .questionnaire, .character, .genderSelection, .alternativeQuestions, .confirmation, .noMatchMessage {
       display: none;
       margin-bottom: 30px;
     }
@@ -84,9 +84,14 @@
     <button id="submitQuiz">Submit Answers</button>
   </div>
 
-  <!-- Step 3: Alternative Questions for Backup Character -->
+  <!-- Step 3: No Matching Character Message -->
+  <div class="noMatchMessage" id="noMatchMessage">
+    <p>No matching combinations found, try answering these alternative questions to find a match.</p>
+  </div>
+
+  <!-- Step 4: Alternative Questions for Backup Character -->
   <div class="alternativeQuestions" id="alternativeQuestions">
-    <p>It seems the characters based on your original answers have been taken. Let's find you a backup character with these quick questions:</p>
+    <p>Let's find you a backup character with these quick questions:</p>
 
     <p>1. Which element do you connect with most?</p>
     <input type="radio" id="alt1" name="altQuestion1" value="a"> Fire <br>
@@ -101,10 +106,10 @@
     <button id="submitAlternativeQuiz">Submit Alternative Answers</button>
   </div>
 
-  <!-- Step 4: Display assigned character -->
+  <!-- Step 5: Display assigned character -->
   <div class="character" id="character"></div>
 
-  <!-- Step 5: Confirmation -->
+  <!-- Step 6: Confirmation -->
   <div class="confirmation" id="confirmation">
     <p>Are you happy with your assigned character?</p>
     <button id="confirmCharacter">Yes, Confirm</button>
@@ -134,7 +139,7 @@
         female: { name: "Dr. Francesca Devereux", description: "The family doctor with more secrets than remedies. Wear a vintage medical coat with chic accessories, like leather gloves and a dramatic, old-world stethoscope." }
       },
       {
-        key: "cacac",
+        key: "aacac",
         male: { name: "Lord Vincent Van Buren", description: "The vengeful former lover. Dress in sharp, classic tailoring with a dark edge—like someone who’s plotting revenge." },
         female: { name: "Lady Vivienne Van Buren", description: "Victor’s former lover with a vengeful heart. Channel Old Hollywood glam, with a fur stole, long satin gloves, and a dress that screams ‘drama’." }
       }
@@ -159,111 +164,4 @@
       }
     ];
 
-    // Reset assigned characters array - this ensures a fresh start on page load
-    let assignedCharacters = [];
-
-    // Show the gender selection when the page loads
-    document.getElementById('genderSelection').style.display = 'block';
-
-    // Handle gender selection
-    document.getElementById('maleChoice').addEventListener('click', function() {
-      selectedGender = 'male';
-      startQuiz();
-    });
-    
-    document.getElementById('femaleChoice').addEventListener('click', function() {
-      selectedGender = 'female';
-      startQuiz();
-    });
-
-    // Start the quiz after gender is selected
-    function startQuiz() {
-      document.getElementById('genderSelection').style.display = 'none';
-      document.getElementById('questionnaire').style.display = 'block';
-    }
-
-    // Handle quiz submission
-    document.getElementById('submitQuiz').addEventListener('click', function() {
-      const answers = `${getSelectedValue('question1')}${getSelectedValue('question2')}${getSelectedValue('question3')}${getSelectedValue('question4')}${getSelectedValue('question5')}`;
-      const availableCharacter = getMatchingCharacter(answers, selectedGender);
-
-      if (availableCharacter) {
-        temporaryCharacter = availableCharacter;
-        document.getElementById('questionnaire').style.display = 'none';
-        document.getElementById('character').innerHTML = `You are assigned: <strong>${temporaryCharacter.name}</strong> - ${temporaryCharacter.description}`;
-        document.getElementById('character').style.display = 'block';
-        document.getElementById('confirmation').style.display = 'block';  // Show confirmation
-      } else {
-        // If no matching character available, show alternative questions
-        document.getElementById('questionnaire').style.display = 'none';
-        document.getElementById('alternativeQuestions').style.display = 'block';
-      }
-    });
-
-    // Handle alternative quiz submission
-    document.getElementById('submitAlternativeQuiz').addEventListener('click', function() {
-      const altAnswers = `${getSelectedValue('altQuestion1')}${getSelectedValue('altQuestion2')}`;
-      const availableAltCharacter = getMatchingAlternativeCharacter(altAnswers, selectedGender);
-
-      if (availableAltCharacter) {
-        temporaryCharacter = availableAltCharacter;
-        document.getElementById('alternativeQuestions').style.display = 'none';
-        document.getElementById('character').innerHTML = `You are assigned: <strong>${temporaryCharacter.name}</strong> - ${temporaryCharacter.description}`;
-        document.getElementById('character').style.display = 'block';
-        document.getElementById('confirmation').style.display = 'block';  // Show confirmation
-      } else {
-        document.getElementById('character').innerHTML = `Sorry, all backup characters have also been assigned.`;
-        document.getElementById('character').style.display = 'block';
-      }
-    });
-
-    // Function to get the selected value of a question
-    function getSelectedValue(questionName) {
-      const options = document.getElementsByName(questionName);
-      for (const option of options) {
-        if (option.checked) {
-          return option.value;
-        }
-      }
-      return null;
-    }
-
-    // Function to match answers to a character based on gender
-    function getMatchingCharacter(answers, gender) {
-      for (const character of characters) {
-        if (character.key === answers && !assignedCharacters.includes(character[gender].name)) {
-          return character[gender];
-        }
-      }
-      return null;  // Return null if no available match
-    }
-
-    // Function to match answers to an alternative character based on gender
-    function getMatchingAlternativeCharacter(answers, gender) {
-      for (const character of alternativeCharacters) {
-        if (character.key === answers && !assignedCharacters.includes(character[gender].name)) {
-          return character[gender];
-        }
-      }
-      return null;  // Return null if no available alternative match
-    }
-
-    // Confirmation handler - lock in character after confirmation
-    document.getElementById('confirmCharacter').addEventListener('click', function() {
-      if (temporaryCharacter) {
-        assignedCharacters.push(temporaryCharacter.name);  // Mark character as taken
-        document.getElementById('confirmation').style.display = 'none';
-        document.getElementById('character').innerHTML += `<p>Your character is confirmed! No one else can choose this character.</p>`;
-      }
-    });
-
-    // Handle restart if the guest is not happy with the assigned character
-    document.getElementById('restartQuiz').addEventListener('click', function() {
-      temporaryCharacter = null;
-      document.getElementById('confirmation').style.display = 'none';
-      document.getElementById('questionnaire').style.display = 'block';  // Restart the quiz
-      document.getElementById('character').style.display = 'none';  // Hide character display
-    });
-  </script>
-</body>
-</html>
+    // Reset assigned characters array - this ensures a fresh start
